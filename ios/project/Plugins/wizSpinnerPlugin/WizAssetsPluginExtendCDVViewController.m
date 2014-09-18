@@ -303,15 +303,15 @@
                 // additional settings for apple spinner
                 UIActivityIndicatorView *appleSpinner = (UIActivityIndicatorView*)[spinnerHolder viewWithTag:48];
                 if ([spinnerColor isEqualToString:@"white"]) {
-                    [appleSpinner setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhiteLarge];
+                    [appleSpinner setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
                 } else if ([spinnerColor isEqualToString:@"grey"]) {
                     [appleSpinner setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
                 } else {
                     [appleSpinner setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
                 }
                 if ([pos isEqualToString:@"low"]) {
-                    [appleSpinner setCenter:CGPointMake(screenWidth/2, screenHeight/1.5)];
-                } else if ([pos isEqualToString:@"middle"]) { 
+                    [appleSpinner setCenter:CGPointMake(screenWidth/2, screenHeight/1.0625)];
+                } else if ([pos isEqualToString:@"middle"]) {
                     [appleSpinner setCenter:CGPointMake(screenWidth/2, screenHeight/2)];
                 } else {
                     // default middle
@@ -547,8 +547,8 @@
     [appleSpinner setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin];
     [appleSpinner setContentMode:UIViewContentModeScaleToFill];
     if ([pos isEqualToString:@"low"]) {
-        [appleSpinner setCenter:CGPointMake(screenWidth/2, screenHeight/1.5)];
-    } else if ([pos isEqualToString:@"middle"]) { 
+        [appleSpinner setCenter:CGPointMake(screenWidth/2, screenHeight/1.0625)];
+    } else if ([pos isEqualToString:@"middle"]) {
         [appleSpinner setCenter:CGPointMake(screenWidth/2, screenHeight/2)];
     } else {
         // default middle
@@ -580,7 +580,7 @@
     NSURL *spinnerUrl = nil;
     
     if ([customSpinnerPath isEqualToString:@"default"]) {
-        spinnerUrl = [[NSURL alloc] initFileURLWithPath:[[NSBundle mainBundle] pathForResource:@"www/phonegap/plugin/wizSpinner/spinner" ofType:@"gif" inDirectory:nil]];
+        spinnerUrl = [[NSURL alloc] initFileURLWithPath:[[NSBundle mainBundle] pathForResource:@"spinner" ofType:@"gif" inDirectory:nil]];
     } else {
         // use custom spinner
         if ([self validateUrl:customSpinnerPath]) {

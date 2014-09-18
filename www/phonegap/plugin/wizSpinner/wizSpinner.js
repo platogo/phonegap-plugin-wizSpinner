@@ -63,9 +63,9 @@ WizSpinner.prototype.propsToString = function (obj) {
     }
 }
 
-WizSpinner.prototype.create = function (options) {
+WizSpinner.prototype.create = function (options, successCallback, failureCallback) {
     this.propsToString(options);
-    exec(win, fail, 'WizSpinnerPlugin', 'create', [options]);
+    exec(successCallback, failureCallback, 'WizSpinnerPlugin', 'create', [options]);
 };
 
 WizSpinner.prototype.show = function (options) {
