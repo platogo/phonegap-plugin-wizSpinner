@@ -556,8 +556,10 @@
     }
     
     if ([spinnerColor isEqualToString:@"white"]) {
+        [appleSpinner setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
+    } else if ([spinnerColor isEqualToString:@"whiteLarge"]) {
         [appleSpinner setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    } else if ([spinnerColor isEqualToString:@"grey"]) {
+    } else if ([spinnerColor isEqualToString:@"gray"]) {
         [appleSpinner setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
     } else {
         [appleSpinner setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
