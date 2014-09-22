@@ -296,26 +296,43 @@
             if(spinnerHolder.tag==44){
                 
                 CGRect screenRect = [spinnerHolder bounds];
-                CGFloat screenWidth = screenRect.size.width;
-                CGFloat screenHeight = screenRect.size.height;
+                CGFloat screenWidth;
+                CGFloat screenHeight;
                 
+                UIActivityIndicatorViewStyle topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
                 
-                // additional settings for apple spinner
-                UIActivityIndicatorView *appleSpinner = (UIActivityIndicatorView*)[spinnerHolder viewWithTag:48];
-                if ([spinnerColor isEqualToString:@"white"]) {
-                    [appleSpinner setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
-                } else if ([spinnerColor isEqualToString:@"grey"]) {
-                    [appleSpinner setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
-                } else {
-                    [appleSpinner setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
+                if ([spinnerColor isEqualToString:@"whiteLarge"]) {
+                    topActivityIndicatorStyle = UIActivityIndicatorViewStyleWhiteLarge;
+                } else if ([spinnerColor isEqualToString:@"white"]) {
+                    topActivityIndicatorStyle = UIActivityIndicatorViewStyleWhite;
+                } else if ([spinnerColor isEqualToString:@"gray"]) {
+                    topActivityIndicatorStyle = UIActivityIndicatorViewStyleGray;
                 }
+                
+                UIActivityIndicatorView *appleSpinner = (UIActivityIndicatorView*)[spinnerHolder viewWithTag:48];
+                [appleSpinner setActivityIndicatorViewStyle:topActivityIndicatorStyle];
+                
+                screenWidth = screenRect.size.width;
+                screenHeight = screenRect.size.height;
+                double scaleFactorLow = 0.94;
+                double lowFactorPositionX = screenWidth/2;
+                double lowFactorPositionY = screenHeight * scaleFactorLow;
+                
+                if (IsAtLeastiOSVersion(@"8.0") && UIDeviceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)) { // starting from iOS 8 screen dimension is orientation dependent
+                    if ([UIApplication sharedApplication].statusBarOrientation == UIDeviceOrientationLandscapeRight) {
+                        scaleFactorLow = 0.06;
+                    }
+                    lowFactorPositionX = screenWidth*scaleFactorLow;
+                    lowFactorPositionY = screenHeight/2;
+                }
+                
                 if ([pos isEqualToString:@"low"]) {
-                    [appleSpinner setCenter:CGPointMake(screenWidth/2, screenHeight/1.0625)];
+                    [appleSpinner setCenter:CGPointMake(lowFactorPositionX, lowFactorPositionY)];
                 } else if ([pos isEqualToString:@"middle"]) {
                     [appleSpinner setCenter:CGPointMake(screenWidth/2, screenHeight/2)];
                 } else {
-                    // default middle
-                    [appleSpinner setCenter:CGPointMake(screenWidth/2, screenHeight/2)];
+                    //default middle
+                    [appleSpinner setCenter:CGPointMake(lowFactorPositionX, lowFactorPositionY)];
                 }
                 
                 // additional settings for the custom activity spinner
