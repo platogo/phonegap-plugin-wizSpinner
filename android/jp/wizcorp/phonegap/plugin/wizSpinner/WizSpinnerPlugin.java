@@ -22,19 +22,12 @@ public class WizSpinnerPlugin extends CordovaPlugin {
 	@Override
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
 
-		if (action.equals("create")) {
-			// create spinner with options
-			// Not supported in Android
-			callbackContext.success();
-			return true;
-		} else if (action.equals("show")) {
-			// Show spinner with options
+		if (action.equals("show")) {
 			Log.i(TAG, "[SHOW SPINNER] ******* ");
-			WizSpinner.show(cordova.getActivity(), args);
+			WizSpinner.show(cordova.getActivity());
 			callbackContext.success();
 			return true;
 		} else if (action.equals("hide")) {
-			// Hide spinner with options
 			Log.i(TAG, "[HIDE SPINNER] ******* ");
 			WizSpinner.hide(cordova.getActivity());
 			callbackContext.success();
