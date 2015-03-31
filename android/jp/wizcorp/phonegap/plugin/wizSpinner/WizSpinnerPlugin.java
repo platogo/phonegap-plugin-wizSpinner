@@ -8,8 +8,8 @@ import org.json.JSONException;
 import android.util.Log;
 
 /**
- * 
- * @author WizCorp Inc. [ Incorporated Wizards ] 
+ *
+ * @author WizCorp Inc. [ Incorporated Wizards ]
  * @copyright 2013
  * @file WizSpinnerPlugin for Cordova
  * @about Handle JavaScript API calls from PhoneGap to WizSpinner
@@ -39,9 +39,9 @@ public class WizSpinnerPlugin extends CordovaPlugin {
 			WizSpinner.hide(cordova.getActivity());
 			callbackContext.success();
 			return true;
-		} 
-		
+		}
+
 		return false;
 	}
-	
+
 }
