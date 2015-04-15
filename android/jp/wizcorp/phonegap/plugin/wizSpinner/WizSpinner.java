@@ -28,8 +28,6 @@ public class WizSpinner {
         new Runnable() {
           public void run() {
             int layoutId = _ctx.getResources().getIdentifier("loading_spinner", "layout",_ctx.getApplicationContext().getPackageName());
-            int rotateSpinnerId = _ctx.getResources().getIdentifier("loading_spinner", "anim",_ctx.getApplicationContext().getPackageName());
-            int loadingSpinnerId = _ctx.getResources().getIdentifier("loading_spinner", "id",_ctx.getApplicationContext().getPackageName());
 
             dialog = new Dialog(_ctx);
 
@@ -38,14 +36,12 @@ public class WizSpinner {
 
             WindowManager.LayoutParams wlp = window.getAttributes();
             wlp.gravity = Gravity.BOTTOM;
-            wlp.y = 32;
             window.clearFlags(LayoutParams.FLAG_DIM_BEHIND);
             window.setAttributes(wlp);
 
             dialog.setContentView(layoutId);
             dialog.setCancelable(false);
             dialog.show();
-            dialog.findViewById(loadingSpinnerId).startAnimation(AnimationUtils.loadAnimation(_ctx, rotateSpinnerId));
           }
         }
       );
