@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.WindowManager.LayoutParams;
 import android.view.animation.AnimationUtils;
 
 public class WizSpinner {
@@ -36,11 +35,18 @@ public class WizSpinner {
 
             WindowManager.LayoutParams wlp = window.getAttributes();
             wlp.gravity = Gravity.BOTTOM;
-            window.clearFlags(LayoutParams.FLAG_DIM_BEHIND);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             window.setAttributes(wlp);
 
             dialog.setContentView(layoutId);
             dialog.setCancelable(false);
+            dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
+            // copy system visibility
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                dialog.getWindow().getDecorView().setSystemUiVisibility(_ctx.getWindow().getDecorView().getSystemUiVisibility());
+            }
+
             dialog.show();
           }
         }
