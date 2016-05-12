@@ -33,6 +33,8 @@
         </feature>
     </config-file>
 
+    <source-file src="android/jp/wizcorp/phonegap/plugin/wizSpinner/res/layout/loading_spinner.xml" target-dir="res/layout" />
+
     <source-file src="android/jp/wizcorp/phonegap/plugin/wizSpinner/WizSpinnerPlugin.java"
             target-dir="src/jp/wizcorp/phonegap/plugin/wizSpinner"/>
     <source-file src="android/jp/wizcorp/phonegap/plugin/wizSpinner/WizSpinner.java"
