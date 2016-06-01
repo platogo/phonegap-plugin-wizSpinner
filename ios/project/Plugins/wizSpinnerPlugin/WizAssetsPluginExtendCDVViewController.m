@@ -597,7 +597,7 @@
     NSURL *spinnerUrl = nil;
 
     if ([customSpinnerPath isEqualToString:@"default"]) {
-        spinnerUrl = [[NSURL alloc] initFileURLWithPath:[[NSBundle mainBundle] pathForResource:@"spinner" ofType:@"gif" inDirectory:nil]];
+        spinnerUrl = [[NSURL alloc] initFileURLWithPath:[[NSBundle mainBundle] pathForResource:@"www/phonegap/plugin/wizSpinner/spinner" ofType:@"gif" inDirectory:nil]];
     } else {
         // use custom spinner
         if ([self validateUrl:customSpinnerPath]) {
