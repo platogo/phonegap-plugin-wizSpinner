@@ -314,13 +314,13 @@
 
                 screenWidth = screenRect.size.width;
                 screenHeight = screenRect.size.height;
-                double scaleFactorLow = 0.94;
+                double scaleFactorLow = 0.86;
                 double lowFactorPositionX = screenWidth/2;
                 double lowFactorPositionY = screenHeight * scaleFactorLow;
 
                 if (IsAtLeastiOSVersion(@"8.0") && UIDeviceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)) { // starting from iOS 8 screen dimension is orientation dependent
                     if ([UIApplication sharedApplication].statusBarOrientation == UIDeviceOrientationLandscapeRight) {
-                        scaleFactorLow = 0.06;
+                        scaleFactorLow = 1 - scaleFactorLow;
                     }
                     lowFactorPositionX = screenWidth*scaleFactorLow;
                     lowFactorPositionY = screenHeight/2;
