@@ -20,6 +20,13 @@ public class WizSpinnerPlugin extends CordovaPlugin {
 	private String TAG = "WizSpinnerPlugin";
 
 	@Override
+	public void onDestroy () {
+		Log.i(TAG, "[HIDE SPINNER] onDestroy");
+		WizSpinner.hide(cordova.getActivity());
+		super.onDestroy();
+	}
+
+	@Override
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
 
 		if (action.equals("show")) {
