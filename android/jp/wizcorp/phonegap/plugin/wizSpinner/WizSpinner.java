@@ -69,13 +69,17 @@ public class WizSpinner {
     if ( isVisible ) {
       Log.i(TAG, "[Hiding spinner] ******* ");
 
-      activity.runOnUiThread(
-        new Runnable() {
-          public void run() {
-            dialog.dismiss();
-          }
-        }
-      );
+      if ( !activity.isFinishing() ) { // hopefully fixes crashes where view not attached to window manager
+        activity.runOnUiThread(
+                new Runnable() {
+                  public void run() {
+                    if ( dialog.getWindow() != null ) { // hopefully fixes crashes where view not attached to window manager
+                      dialog.dismiss();
+                    }
+                  }
+                }
+        );
+      }
       isVisible = false;
     }
   }
