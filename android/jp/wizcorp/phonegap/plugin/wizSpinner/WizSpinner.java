@@ -21,7 +21,8 @@ public class WizSpinner {
 
     final Activity _ctx = activity;
 
-    if ( !isVisible ) {
+    // check if is activity is not finished to prevent crashes (http://dimitar.me/android-displaying-dialogs-from-background-threads/)
+    if ( !isVisible && !activity.isFinishing() ) {
       Log.i(TAG, "[display spinner] ******* ");
 
       activity.runOnUiThread(
