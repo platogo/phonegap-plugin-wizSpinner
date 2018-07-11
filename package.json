@@ -1,0 +1,35 @@
+{
+  "name": "jp.wizcorp.phonegap.plugin.wizSpinnerPlugin",
+  "version": "1.0.0",
+  "description": "This plugin allows you to create native spinners & loaders above your HTML application layer.",
+  "cordova": {
+    "id": "jp.wizcorp.phonegap.plugin.wizSpinnerPlugin",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/platogo/phonegap-plugin-wizSpinner.git"
+  },
+  "keywords": [
+    "spinner",
+    "loader",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios"
+  ],
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=2.6.0"
+    }
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/platogo/phonegap-plugin-wizSpinner/issues"
+  },
+  "homepage": "https://github.com/platogo/phonegap-plugin-wizSpinner#readme"
+}
