@@ -429,6 +429,8 @@
         [self rotateCustomLoader:orientation];
     }
 
+    // Click through UIView
+    spinnerHolder.userInteractionEnabled = FALSE;
 
     for (UIView*spinnerHolder in [UIApplication sharedApplication].keyWindow.subviews) {
         if (spinnerHolder.tag == 44) {
