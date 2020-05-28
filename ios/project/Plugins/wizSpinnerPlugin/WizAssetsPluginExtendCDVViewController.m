@@ -363,6 +363,8 @@
                     [textBox setTextColor:[self colorWithHexString:color]];
                 }
 
+                // Click through UIView
+                spinnerHolder.userInteractionEnabled = FALSE;
 
                 // set back screen
                 [[spinnerHolder viewWithTag:47] setAlpha:opacity];
@@ -428,9 +430,6 @@
     if (orientation != 1) {
         [self rotateCustomLoader:orientation];
     }
-
-    // Click through UIView
-    spinnerHolder.userInteractionEnabled = FALSE;
 
     for (UIView*spinnerHolder in [UIApplication sharedApplication].keyWindow.subviews) {
         if (spinnerHolder.tag == 44) {
