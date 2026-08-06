@@ -9,28 +9,9 @@
 #import "WizAssetsPluginExtendCDVViewController.h"
 #import "WizActivitySpinnerView.h"
 #import "WizDebugLog.h"
+#import "WizSpinnerWindowHelper.h"
 
 #define degreesToRadians(x) (M_PI * x / 180.0)
-
-// Helper to get the key window in scene-based apps (cordova-ios 8+)
-static UIWindow* wizGetActiveWindow(void) {
-    if (@available(iOS 13.0, *)) {
-        for (UIScene *scene in [UIApplication sharedApplication].connectedScenes) {
-            if ([scene isKindOfClass:[UIWindowScene class]]) {
-                UIWindowScene *windowScene = (UIWindowScene *)scene;
-                for (UIWindow *window in windowScene.windows) {
-                    if (window.isKeyWindow) {
-                        return window;
-                    }
-                }
-            }
-        }
-    }
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    return [UIApplication sharedApplication].keyWindow;
-#pragma clang diagnostic pop
-}
 
 @implementation CDVViewController (extendViews)
 

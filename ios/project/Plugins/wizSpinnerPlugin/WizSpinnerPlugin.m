@@ -9,6 +9,7 @@
 #import "WizSpinnerPlugin.h"
 #import "WizAssetsPluginExtendCDVViewController.h"
 #import "WizDebugLog.h"
+#import "WizSpinnerWindowHelper.h"
 
 @interface WizSpinnerPlugin () <UIWebViewDelegate>
 + (void)load;
@@ -81,27 +82,7 @@ static BOOL spinnerInitialized = NO;
     }
 
     // Find the key window — supports both scene-based and legacy apps
-    UIWindow *window = nil;
-    if (@available(iOS 13.0, *)) {
-        for (UIScene *scene in [UIApplication sharedApplication].connectedScenes) {
-            if ([scene isKindOfClass:[UIWindowScene class]]) {
-                UIWindowScene *windowScene = (UIWindowScene *)scene;
-                for (UIWindow *w in windowScene.windows) {
-                    if (w.isKeyWindow) {
-                        window = w;
-                        break;
-                    }
-                }
-                if (window) break;
-            }
-        }
-    }
-    if (!window) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        window = [UIApplication sharedApplication].keyWindow;
-#pragma clang diagnostic pop
-    }
+    UIWindow *window = wizGetActiveWindow();
 
     if (!window) {
         // Window still not available (will retry via sceneDidBecomeActive)
