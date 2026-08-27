@@ -9,14 +9,18 @@
 #import "WizSpinnerPlugin.h"
 #import "WizAssetsPluginExtendCDVViewController.h"
 #import "WizDebugLog.h"
+#import "WizSpinnerWindowHelper.h"
 
 @interface WizSpinnerPlugin () <UIWebViewDelegate>
 + (void)load;
 + (void)didFinishLaunching:(NSNotification *)notification;
++ (void)sceneDidBecomeActive:(NSNotification *)notification;
 + (void)willTerminate:(NSNotification *)notification;
++ (void)initializeSpinner;
 @end
 
 static NSDictionary *defaults = nil;
+static BOOL spinnerInitialized = NO;
 
 @implementation WizSpinnerPlugin
 
@@ -34,6 +38,16 @@ static NSDictionary *defaults = nil;
                                              selector:@selector(didFinishLaunching:)
                                                  name:UIApplicationDidFinishLaunchingNotification
                                                object:nil];
+
+    // cordova-ios 8+: scene-based lifecycle. The window isn't available at
+    // didFinishLaunching time, so we also observe UISceneDidActivateNotification
+    // which fires once the scene's window is ready.
+    if (@available(iOS 13.0, *)) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(sceneDidBecomeActive:)
+                                                     name:UISceneDidActivateNotification
+                                                   object:nil];
+    }
     
     // Register for willTerminate notifications here so that we can observer terminate
     // events and unregister observing launch notifications.  This isn't strictly
@@ -47,57 +61,102 @@ static NSDictionary *defaults = nil;
 + (void)didFinishLaunching:(NSNotification *)notification
 {
     // This code will be called immediately after application:didFinishLaunchingWithOptions:.
-    
-    // Cordova apps have the view controller on the app delegate
+    // In pre-scene (cordova-ios 7) apps, the window and viewController are available now.
+    // In scene-based (cordova-ios 8+) apps, the window is not yet available — 
+    // initialization will happen in sceneDidBecomeActive: instead.
+    [self initializeSpinner];
+}
+
++ (void)sceneDidBecomeActive:(NSNotification *)notification
+{
+    // cordova-ios 8+: the scene's window is now ready
+    if (!spinnerInitialized) {
+        [self initializeSpinner];
+    }
+}
+
++ (void)initializeSpinner
+{
+    if (spinnerInitialized) {
+        return;
+    }
+
+    // Find the key window — supports both scene-based and legacy apps
+    UIWindow *window = wizGetActiveWindow();
+
+    if (!window) {
+        // Window still not available (will retry via sceneDidBecomeActive)
+        return;
+    }
+
+    // Get the CDVViewController — either from rootViewController or legacy appDelegate.viewController
     CDVViewController *viewController = nil;
-    id <UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;
-    SEL viewControllerSelector = @selector(viewController);
-
-    // Force Cordova to pre-create the plugin command singleton and create the spinner (initially hidden)
-    if ( [appDelegate respondsToSelector:viewControllerSelector] ) {
-        viewController = [appDelegate performSelector:viewControllerSelector];
-        SEL getCommandInstanceSelector = @selector(getCommandInstance:);
-        if ( [viewController respondsToSelector:getCommandInstanceSelector] ) {
-            
-            // Get options from the wizSpinner.plist (in the application bundle)
-            NSString *path = [[NSBundle mainBundle] pathForResource:@"wizSpinner" ofType:@"plist"];
-            NSMutableDictionary *options = [NSMutableDictionary dictionaryWithContentsOfFile:path];
-            
-            if ( options == nil ) {
-                [NSException raise:NSInternalInconsistencyException
-                            format:@"Missing wizSpinner.plist -- required when using the wizSpinner plugin.  Please add it to your application bundle."];
-            }
-            
-            // Read specified defaults.
-            defaults = [options objectForKey:@"defaults"];
-            if ( defaults == nil ) {
-                defaults = [[NSDictionary alloc] initWithObjectsAndKeys:
-                            @"middle",              @"position",
-                            @"0.7",                 @"opacity",
-                            @"white",               @"spinnerColor",
-                            @"white",               @"textColor",
-                            @"Initializing App...", @"label",
-                            nil];
-            }
-            [defaults retain];
-
-            // Create/get the singleton.
-            WizSpinnerPlugin *plugin = [viewController getCommandInstance:@"WizSpinnerPlugin"];
-            
-            // Create the spinner with defaults
-            CDVInvokedUrlCommand *cmd = [[CDVInvokedUrlCommand alloc] initWithArguments:[NSArray arrayWithObjects:defaults, nil] callbackId:@"" className:@"wizSpinnerPlugin" methodName:@"create"];
-            [plugin create:cmd];
-            [cmd release];
-            
-            // Auto-show the spinner (if requested)
-            BOOL autoShowSpinnerOnStart = [[options objectForKey:@"autoShowSpinnerOnStart"] boolValue];
-            if ( autoShowSpinnerOnStart ) {
-                CDVInvokedUrlCommand *cmd = [[CDVInvokedUrlCommand alloc] initWithArguments:[NSArray arrayWithObjects:defaults, nil] callbackId:@"" className:@"wizSpinnerPlugin" methodName:@"show"];
-                [plugin show:cmd];
-                [cmd release];
+    UIViewController *rootVC = window.rootViewController;
+    if ([rootVC isKindOfClass:[CDVViewController class]]) {
+        viewController = (CDVViewController *)rootVC;
+    } else {
+        // Legacy fallback: check appDelegate.viewController
+        id <UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;
+        SEL viewControllerSelector = @selector(viewController);
+        if ([appDelegate respondsToSelector:viewControllerSelector]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+            id vc = [appDelegate performSelector:viewControllerSelector];
+#pragma clang diagnostic pop
+            if ([vc isKindOfClass:[CDVViewController class]]) {
+                viewController = (CDVViewController *)vc;
             }
         }
-    }    
+    }
+
+    if (!viewController) {
+        return;
+    }
+
+    SEL getCommandInstanceSelector = @selector(getCommandInstance:);
+    if (![viewController respondsToSelector:getCommandInstanceSelector]) {
+        return;
+    }
+
+    // Get options from the wizSpinner.plist (in the application bundle)
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"wizSpinner" ofType:@"plist"];
+    NSMutableDictionary *options = [NSMutableDictionary dictionaryWithContentsOfFile:path];
+
+    if (options == nil) {
+        [NSException raise:NSInternalInconsistencyException
+                    format:@"Missing wizSpinner.plist -- required when using the wizSpinner plugin.  Please add it to your application bundle."];
+    }
+
+    // Read specified defaults.
+    defaults = [options objectForKey:@"defaults"];
+    if (defaults == nil) {
+        defaults = [[NSDictionary alloc] initWithObjectsAndKeys:
+                    @"middle",              @"position",
+                    @"0.7",                 @"opacity",
+                    @"white",               @"spinnerColor",
+                    @"white",               @"textColor",
+                    @"Initializing App...", @"label",
+                    nil];
+    }
+    [defaults retain];
+
+    // Create/get the singleton.
+    WizSpinnerPlugin *plugin = [viewController getCommandInstance:@"WizSpinnerPlugin"];
+
+    // Create the spinner with defaults
+    CDVInvokedUrlCommand *cmd = [[CDVInvokedUrlCommand alloc] initWithArguments:[NSArray arrayWithObjects:defaults, nil] callbackId:@"" className:@"wizSpinnerPlugin" methodName:@"create"];
+    [plugin create:cmd];
+    [cmd release];
+
+    // Auto-show the spinner (if requested)
+    BOOL autoShowSpinnerOnStart = [[options objectForKey:@"autoShowSpinnerOnStart"] boolValue];
+    if (autoShowSpinnerOnStart) {
+        CDVInvokedUrlCommand *cmd = [[CDVInvokedUrlCommand alloc] initWithArguments:[NSArray arrayWithObjects:defaults, nil] callbackId:@"" className:@"wizSpinnerPlugin" methodName:@"show"];
+        [plugin show:cmd];
+        [cmd release];
+    }
+
+    spinnerInitialized = YES;
 }
 
 + (void)willTerminate:(NSNotification *)notification

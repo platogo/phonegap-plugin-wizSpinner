@@ -9,6 +9,7 @@
 #import "WizAssetsPluginExtendCDVViewController.h"
 #import "WizActivitySpinnerView.h"
 #import "WizDebugLog.h"
+#import "WizSpinnerWindowHelper.h"
 
 #define degreesToRadians(x) (M_PI * x / 180.0)
 
@@ -19,7 +20,7 @@
 
 {
 
-    [[UIApplication sharedApplication].keyWindow addSubview:progressView];
+    [wizGetActiveWindow() addSubview:progressView];
     //[self.imageView addSubview:progressView];
 
     return NULL;
@@ -47,7 +48,7 @@
     WizLog(@"****************************************** [hideCustomLoader]");
 
     // hide components
-    for (UIView* spinnerHolder in [UIApplication sharedApplication].keyWindow.subviews) {
+    for (UIView* spinnerHolder in wizGetActiveWindow().subviews) {
         if (spinnerHolder.tag==44) {
             // hide all
 
@@ -78,7 +79,7 @@
 {
     WizLog(@"****************************************** remove spinner");
     // remove view
-    for(UIActivityIndicatorView*spinnerView in [UIApplication sharedApplication].keyWindow.subviews) {
+    for(UIActivityIndicatorView*spinnerView in wizGetActiveWindow().subviews) {
         if(spinnerView.tag==45){
             [spinnerView removeFromSuperview];
         }
@@ -103,7 +104,7 @@
 {
 
 
-    for(UIView*spinnerHolder in [UIApplication sharedApplication].keyWindow.subviews) {
+    for(UIView*spinnerHolder in wizGetActiveWindow().subviews) {
         if(spinnerHolder.tag==44){
             WizLog(@"rotating view.. %@ : orientation... %i", spinnerHolder , orientation);
 
@@ -113,7 +114,7 @@
                 [spinnerHolder setAutoresizesSubviews:YES];
 
                 spinnerHolder.transform = CGAffineTransformMakeRotation(0.0);
-                [spinnerHolder setFrame:CGRectMake([UIApplication sharedApplication].keyWindow.bounds.origin.x, [UIApplication sharedApplication].keyWindow.bounds.origin.y, [UIApplication sharedApplication].keyWindow.bounds.size.width, [UIApplication sharedApplication].keyWindow.bounds.size.height)];
+                [spinnerHolder setFrame:CGRectMake(wizGetActiveWindow().bounds.origin.x, wizGetActiveWindow().bounds.origin.y, wizGetActiveWindow().bounds.size.width, wizGetActiveWindow().bounds.size.height)];
 
                 for (UITextView*textView in spinnerHolder.subviews) {
                     if (textView.tag == 46) {
@@ -126,7 +127,7 @@
 
                 [spinnerHolder setAutoresizesSubviews:YES];
                 spinnerHolder.transform = CGAffineTransformMakeRotation(degreesToRadians(180)); // 180 degrees
-                [spinnerHolder setFrame:CGRectMake([UIApplication sharedApplication].keyWindow.bounds.origin.x, [UIApplication sharedApplication].keyWindow.bounds.origin.y, [UIApplication sharedApplication].keyWindow.bounds.size.width, [UIApplication sharedApplication].keyWindow.bounds.size.height)];
+                [spinnerHolder setFrame:CGRectMake(wizGetActiveWindow().bounds.origin.x, wizGetActiveWindow().bounds.origin.y, wizGetActiveWindow().bounds.size.width, wizGetActiveWindow().bounds.size.height)];
 
                 for (UITextView*textView in spinnerHolder.subviews) {
                     if (textView.tag == 46) {
@@ -139,7 +140,7 @@
 
                 [spinnerHolder setAutoresizesSubviews:YES];
                 spinnerHolder.transform = CGAffineTransformMakeRotation(degreesToRadians(90)); // 90 degress
-                [spinnerHolder setFrame:CGRectMake([UIApplication sharedApplication].keyWindow.bounds.origin.x, [UIApplication sharedApplication].keyWindow.bounds.origin.y, [UIApplication sharedApplication].keyWindow.bounds.size.width, [UIApplication sharedApplication].keyWindow.bounds.size.height)];
+                [spinnerHolder setFrame:CGRectMake(wizGetActiveWindow().bounds.origin.x, wizGetActiveWindow().bounds.origin.y, wizGetActiveWindow().bounds.size.width, wizGetActiveWindow().bounds.size.height)];
 
                 for (UITextView*textView in spinnerHolder.subviews) {
                     if (textView.tag == 46) {
@@ -152,7 +153,7 @@
 
                 [spinnerHolder setAutoresizesSubviews:YES];
                 spinnerHolder.transform = CGAffineTransformMakeRotation(degreesToRadians(-90)); // 270 degrees
-                [spinnerHolder setFrame:CGRectMake([UIApplication sharedApplication].keyWindow.bounds.origin.x, [UIApplication sharedApplication].keyWindow.bounds.origin.y, [UIApplication sharedApplication].keyWindow.bounds.size.width, [UIApplication sharedApplication].keyWindow.bounds.size.height)];
+                [spinnerHolder setFrame:CGRectMake(wizGetActiveWindow().bounds.origin.x, wizGetActiveWindow().bounds.origin.y, wizGetActiveWindow().bounds.size.width, wizGetActiveWindow().bounds.size.height)];
 
                 for (UITextView*textView in spinnerHolder.subviews) {
                     if (textView.tag == 46) {
@@ -240,7 +241,7 @@
         if (![customSpinnerPath isEqualToString:@"default"]) {
             // do not do anything a default value means a path has not been give so we can assume no need to change
 
-            for(UIView* spinnerHolder in [UIApplication sharedApplication].keyWindow.subviews) {
+            for(UIView* spinnerHolder in wizGetActiveWindow().subviews) {
                 if (spinnerHolder.tag==44) {
                     [[spinnerHolder viewWithTag:45] setHidden:TRUE];
                     [[spinnerHolder viewWithTag:45] removeFromSuperview];
@@ -292,7 +293,7 @@
 
 
         // show and set components
-        for(UIView* spinnerHolder in [UIApplication sharedApplication].keyWindow.subviews) {
+        for(UIView* spinnerHolder in wizGetActiveWindow().subviews) {
             if(spinnerHolder.tag==44){
 
                 CGRect screenRect = [spinnerHolder bounds];
@@ -404,7 +405,7 @@
 
 
         // show components
-        for (UIView* spinnerHolder in [UIApplication sharedApplication].keyWindow.subviews) {
+        for (UIView* spinnerHolder in wizGetActiveWindow().subviews) {
             if (spinnerHolder.tag == 44){
                 // show apple spinner
                 [[spinnerHolder viewWithTag:48] setHidden:FALSE];
@@ -431,7 +432,7 @@
         [self rotateCustomLoader:orientation];
     }
 
-    for (UIView*spinnerHolder in [UIApplication sharedApplication].keyWindow.subviews) {
+    for (UIView*spinnerHolder in wizGetActiveWindow().subviews) {
         if (spinnerHolder.tag == 44) {
             [spinnerHolder setHidden:FALSE];
         }
@@ -446,7 +447,7 @@
  */
 -(CDVViewController*)createCustomLoader:(NSDictionary *)options
 {
-    for(UIView*screen in [UIApplication sharedApplication].keyWindow.subviews) {
+    for(UIView*screen in wizGetActiveWindow().subviews) {
         if(screen.tag==44){
             WizLog(@"****************************************** ALREADY CREATED SPLASH LOADER - return.");
             return NULL;
@@ -525,7 +526,7 @@
 
     // the holder for everything
     // Note: The spinner holder will cover the whole winow so initialize using the application's window frame
-    UIView *spinnerHolder = [[UIView alloc] initWithFrame:[UIApplication sharedApplication].keyWindow.frame];
+    UIView *spinnerHolder = [[UIView alloc] initWithFrame:wizGetActiveWindow().frame];
     spinnerHolder.tag = 44;
     spinnerHolder.hidden = TRUE;
     [spinnerHolder setClipsToBounds:TRUE];
@@ -667,7 +668,7 @@
 
     [loaderStatus setHidden:TRUE];
 
-    [[UIApplication sharedApplication].keyWindow addSubview:spinnerHolder];
+    [wizGetActiveWindow() addSubview:spinnerHolder];
 
 
     // add views to screen
@@ -698,7 +699,7 @@
 
 -(CDVViewController*)updateLoaderLabel:(NSString *)loaderText
 {
-    for (UIView*spinnerHolder in [UIApplication sharedApplication].keyWindow.subviews) {
+    for (UIView*spinnerHolder in wizGetActiveWindow().subviews) {
         if(spinnerHolder.tag==44){
             for(UITextView*loaderLabel in spinnerHolder.subviews) {
                 if(loaderLabel.tag==46){
